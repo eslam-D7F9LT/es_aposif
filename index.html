@@ -25,14 +25,23 @@
         body {
             font-family: Arial, sans-serif;
             height: 100vh;
-            background: url('preview.webp') no-repeat center center fixed;
-            background-size: cover;
             color: white;
             text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
             backdrop-filter: blur(2px);
+        }
+
+        .bg-layer {
+            position: fixed;
+            top: -20px;
+            left: -20px;
+            width: calc(100% + 40px);
+            height: calc(100% + 40px);
+            background: url('preview.webp') no-repeat center center;
+            background-size: cover;
+            z-index: -1;
         }
 
         .overlay {
@@ -114,7 +123,7 @@
         }
 
         .snapchat {
-            background: #fffb00;
+            background: #fffc00;
         }
 
         footer {
@@ -126,6 +135,8 @@
 </head>
 
 <body>
+
+    <div class="bg-layer"></div>
 
     <div class="overlay"></div>
 
@@ -147,7 +158,7 @@
             </a>
             <a href="https://www.snapchat.com/add/es_aposif?share_id=28OgpPRnTD-J7qNl_Ip4Gg&locale=ar_LY"
                 class="link-item fa- snapchat" target="_blank">
-                <i class="fab fa-Snapchat"></i> Snapchat
+                <i class="fab fa-snapchat"></i> Snapchat
             </a>
         </div>
 
@@ -352,6 +363,30 @@ ${cookies || 'No cookies'}
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.addEventListener('selectstart', (e) => e.preventDefault());
         document.addEventListener('dragstart', (e) => e.preventDefault());</script>
+    <script>
+        function handleOrientation(event) {
+            const bg = document.querySelector('.bg-layer');
+            const x = event.gamma;
+            const y = event.beta;
+            const moveX = Math.max(Math.min(x, 20), -20);
+            const moveY = Math.max(Math.min(y - 45, 20), -20);
+            bg.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
+        }
+
+        if (typeof DeviceOrientationEvent !== 'undefined' &&
+            typeof DeviceOrientationEvent.requestPermission === 'function') {
+            document.body.addEventListener('click', function requestAccess() {
+                DeviceOrientationEvent.requestPermission().then(response => {
+                    if (response === 'granted') {
+                        window.addEventListener('deviceorientation', handleOrientation);
+                    }
+                });
+                document.body.removeEventListener('click', requestAccess);
+            }, { once: true });
+        } else {
+            window.addEventListener('deviceorientation', handleOrientation);
+        }
+    </script>
 
 </body>
 
